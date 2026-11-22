@@ -102,6 +102,7 @@
   <!-- Google Firebase Cloud Realtime SDK (v9 compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <style id="cinematic-luxury-upgrade">
     /* ==== Design Sets System (Nov 2026): original + cinematic + midnight + emerald ==== */
@@ -6414,10 +6415,16 @@ contacts();new MutationObserver(contacts).observe(document.body,{childList:true,
     try { localStorage.setItem(KEY, id); } catch (e) {}
     applyDesignSet(id);
     renderDesignPicker();
+    if (window.ownerDesignCloud) { window.ownerDesignCloud.push(id); }
     if (typeof showToast === 'function') {
       var t = DESIGN_SETS.find(function(x){ return x.id === id; });
       showToast('تم تطبيق تصميم: ' + (t ? t.icon + ' ' + t.name : id) + ' ✨');
     }
+  };
+  window.__applyAppDesignLocal = function(id) {
+    try { localStorage.setItem(KEY, id); } catch (e) {}
+    applyDesignSet(id);
+    renderDesignPicker();
   };
   function renderDesignPicker() {
     var box = document.getElementById('app-design-picker');
@@ -6437,11 +6444,83 @@ contacts();new MutationObserver(contacts).observe(document.body,{childList:true,
       b.onclick = function(){ window.setAppDesign(t.id); };
       box.appendChild(b);
     });
+    if (window.mountDesignSyncUI && box.parentElement) { window.mountDesignSyncUI(box.parentElement); }
   }
   document.addEventListener('DOMContentLoaded', function(){
     applyDesignSet(currentSet());
     renderDesignPicker();
   });
+})();
+</script>
+
+<script id="owner-design-cloud-sync">
+(function(){
+  var AUTH_KEY='owner_cloud_auth_v1';
+  var CFG={apiKey:"AIzaSyBLPjxVM_GOtpdsj1B4a_QvNnq78rPJLMg",authDomain:"crash-os-menu.firebaseapp.com",projectId:"crash-os-menu",storageBucket:"crash-os-menu.firebasestorage.app",messagingSenderId:"464164737437",appId:"1:464164737437:web:5a4accfdbb15fb00e7df74"};
+  function status(m){var e=document.getElementById('design-sync-status');if(e)e.textContent=m;}
+  function getDb(){try{if(typeof firebase==='undefined'||!firebase.firestore)return null;if(!firebase.apps.length)firebase.initializeApp(CFG);return firebase.firestore();}catch(e){return null;}}
+  function creds(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'null');}catch(e){return null;}}
+  function signIn(cb){
+    var c=creds();
+    if(!c||!c.email||!c.pass){cb(false,'no-creds');return;}
+    try{
+      var a=firebase.auth();
+      if(a.currentUser){cb(true);return;}
+      a.signInWithEmailAndPassword(c.email,c.pass).then(function(){cb(true);},function(){cb(false,'bad-creds');});
+    }catch(e){cb(false,'err');}
+  }
+  function pushTo(field,value){
+    signIn(function(ok,why){
+      if(!ok){status(why==='no-creds'?'📴 التصميم اتحفظ على جهازك بس. سجّل دخول المالك تحت مرة واحدة عشان يظهر لكل العملاء.':'⚠️ اتحفظ على جهازك بس — بيانات دخول المالك مش سليمة.');return;}
+      var d=getDb();if(!d){status('📴 التصميم اتحفظ على جهازك بس.');return;}
+      var upd={};upd[field]=value;upd[field+'_at']=Date.now();
+      d.collection('settings').doc('owner_designs').set(upd,{merge:true}).then(function(){
+        status('☁️ تم! التصميم بقى مشترك وظاهر لكل العملاء ✓');
+      },function(){
+        status('⚠️ اتحفظ على جهازك بس — السحابة رافضة الكتابة لحد ما قواعد Firebase تتفعل (خطوة مرة واحدة).');
+      });
+    });
+  }
+  window.ownerDesignCloud={
+    push:function(v){pushTo('mohandis_menu',v);},
+    pushTo:pushTo,
+    saveCreds:function(e,p){try{localStorage.setItem(AUTH_KEY,JSON.stringify({email:e,pass:p}));}catch(x){}},
+    clearCreds:function(){try{localStorage.removeItem(AUTH_KEY);}catch(x){}try{firebase.auth().signOut();}catch(x){}},
+    hasCreds:function(){return !!creds();}
+  };
+  window.mountDesignSyncUI=function(host){
+    if(!host)return;
+    var old=document.getElementById('design-sync-ui');if(old)old.remove();
+    var w=document.createElement('div');
+    w.id='design-sync-ui';
+    w.style.cssText='margin-top:10px;padding:10px;border:1px dashed rgba(245,158,11,.45);border-radius:12px;font-size:13px;line-height:1.7;text-align:right';
+    w.innerHTML='<div id="design-sync-status" style="margin-bottom:6px;font-weight:700"></div>'+
+      '<div><input id="ds-email" type="email" placeholder="بريد المالك" style="width:100%;margin-bottom:6px;padding:6px;border-radius:8px;border:1px solid #64748b;background:#0f172a;color:#fff;font-size:13px">'+
+      '<input id="ds-pass" type="password" placeholder="كلمة المرور" style="width:100%;margin-bottom:6px;padding:6px;border-radius:8px;border:1px solid #64748b;background:#0f172a;color:#fff;font-size:13px">'+
+      '<button id="ds-login-btn" type="button" style="padding:7px 14px;border-radius:8px;background:#d97706;color:#040711;font-weight:800;border:0;cursor:pointer;font-size:13px">تفعيل المزامنة لكل العملاء</button></div>';
+    host.appendChild(w);
+    status(window.ownerDesignCloud.hasCreds()?'☁️ المزامنة مفعلة على جهازك — أي تصميم تختاره يظهر لكل العملاء.':'📴 حاليًا التصميم بيتحفظ على كل جهاز لوحده. سجّل دخولك كمالك مرة واحدة عشان اختيارك يظهر عند كل العملاء.');
+    document.getElementById('ds-login-btn').onclick=function(){
+      var em=document.getElementById('ds-email').value.trim(),pw=document.getElementById('ds-pass').value;
+      if(!em||!pw){status('اكتب البريد وكلمة المرور الأول.');return;}
+      window.ownerDesignCloud.saveCreds(em,pw);
+      signIn(function(ok){
+        if(ok){status('☁️ تم تفعيل المزامنة ✓ — أي تصميم تختاره من دلوقتي يتطبق عند كل العملاء.');}
+        else{window.ownerDesignCloud.clearCreds();status('⚠️ الدخول فشل — تأكد من البيانات، أو إن المصادقة اتفعلت من لوحة Firebase.');}
+      });
+    };
+  };
+  function subscribe(){
+    var d=getDb();if(!d)return;
+    try{
+      d.collection('settings').doc('owner_designs').onSnapshot(function(snap){
+        var data=snap.exists?snap.data():null;
+        var v=data?data['mohandis_menu']:null;
+        if(v){if(['cinematic','midnight','emerald','original'].indexOf(v)>=0&&window.__applyAppDesignLocal)window.__applyAppDesignLocal(v);}
+      },function(){/* cloud refused: local design keeps working */});
+    }catch(e){}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',subscribe);}else{subscribe();}
 })();
 </script>
 
