@@ -104,32 +104,54 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style id="cinematic-luxury-upgrade">
-    /* ==== Cinematic Luxury Upgrade (Nov 2026) ==== */
+    /* ==== Design Sets System (Nov 2026): original + cinematic + midnight + emerald ==== */
+    /* Base stability fixes (always on, not part of any design set) */
     html, body { overflow-x: hidden; }
     * { min-width: 0; }
     img, svg, video, canvas { max-width: 100%; }
     html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
-    body::before { content:""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background:
-        radial-gradient(900px 480px at 85% -5%, rgba(217,119,6,0.10), transparent 60%),
-        radial-gradient(760px 480px at 8% 108%, rgba(30,64,175,0.10), transparent 62%); }
-    button { transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, filter .2s ease, background-color .2s ease, border-color .2s ease; }
-    button:hover { filter: brightness(1.07); }
-    button:active { transform: scale(.96); }
     :focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
-    .glass-panel { box-shadow: 0 24px 60px -32px rgba(0,0,0,.9); transition: border-color .25s ease, box-shadow .3s ease; }
-    .glass-panel:hover { border-color: rgba(251,191,36,.38) !important; }
-    ::-webkit-scrollbar { width: 10px; height: 10px; }
-    ::-webkit-scrollbar-track { background: #0b1120; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#b45309,#78350f); border-radius: 8px; border: 2px solid #0b1120; }
-    /* Cinematic hero: richer real photography + film-grade gradient */
-    #cust-hero-banner { box-shadow: 0 40px 90px -40px rgba(245,158,11,.30), 0 30px 60px -30px rgba(0,0,0,.9) !important; border-color: rgba(251,191,36,.35) !important; }
-    #cust-hero-banner::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+    body.app-themed button { transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease, filter .2s ease, background-color .2s ease, border-color .2s ease; }
+    body.app-themed button:hover { filter: brightness(1.07); }
+    body.app-themed button:active { transform: scale(.96); }
+    body.app-themed ::-webkit-scrollbar { width: 10px; height: 10px; }
+    body.app-themed ::-webkit-scrollbar-track { background: #0b1120; }
+    body.app-themed ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#475569,#1e293b); border-radius: 8px; border: 2px solid #0b1120; }
+    body.app-themed .glass-panel { box-shadow: 0 24px 60px -32px rgba(0,0,0,.9); transition: border-color .25s ease, box-shadow .3s ease; }
+    @media (prefers-reduced-motion: reduce) { body.app-themed button, body.app-themed .glass-panel { transition: none !important; } }
+    /* ---- design set: cinematic ---- */
+    body.app-theme-cinematic::before { content:""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: radial-gradient(900px 480px at 85% -5%, rgba(217,119,6,0.12), transparent 60%), radial-gradient(760px 480px at 8% 108%, rgba(30,64,175,0.08), transparent 62%); }
+    body.app-theme-cinematic .glass-panel:hover { border-color: #f59e0b66 !important; }
+    body.app-theme-cinematic ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#d97706,#1e293b) !important; }
+    body.app-theme-cinematic #cust-hero-banner { box-shadow: 0 40px 90px -40px rgba(217,119,6,0.30), 0 30px 60px -30px rgba(0,0,0,.9) !important; border-color: #f59e0b59 !important; }
+    body.app-theme-cinematic #cust-hero-banner::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
       background: linear-gradient(to top, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.25) 45%, rgba(2,6,23,0.35) 100%); }
-    #cust-hero-banner > .relative { z-index: 2; }
-    #cust-cover-img { opacity: .6 !important; filter: saturate(1.15) contrast(1.05); transform: scale(1.02); }
-    #cust-view-title { background: linear-gradient(135deg,#fff8e1 0%,#fde68a 35%,#f59e0b 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 14px rgba(0,0,0,.8)); }
-    @media (prefers-reduced-motion: reduce) { button, .glass-panel { transition: none !important; } }
+    body.app-theme-cinematic #cust-hero-banner > .relative { z-index: 2; }
+    body.app-theme-cinematic #cust-cover-img { opacity: .6 !important; filter: saturate(1.15) contrast(1.05); transform: scale(1.02); }
+    body.app-theme-cinematic #cust-view-title { background: linear-gradient(135deg,#fff8e1 0%,#fde68a 35%,#f59e0b 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 14px rgba(0,0,0,.8)); }
+    /* ---- design set: midnight ---- */
+    body.app-theme-midnight::before { content:""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: radial-gradient(900px 480px at 85% -5%, rgba(56,189,248,0.12), transparent 60%), radial-gradient(760px 480px at 8% 108%, rgba(99,102,241,0.10), transparent 62%); }
+    body.app-theme-midnight .glass-panel:hover { border-color: #38bdf866 !important; }
+    body.app-theme-midnight ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#2563eb,#1e293b) !important; }
+    body.app-theme-midnight #cust-hero-banner { box-shadow: 0 40px 90px -40px rgba(56,189,248,0.30), 0 30px 60px -30px rgba(0,0,0,.9) !important; border-color: #38bdf859 !important; }
+    body.app-theme-midnight #cust-hero-banner::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background: linear-gradient(to top, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.25) 45%, rgba(2,6,23,0.35) 100%); }
+    body.app-theme-midnight #cust-hero-banner > .relative { z-index: 2; }
+    body.app-theme-midnight #cust-cover-img { opacity: .6 !important; filter: saturate(1.15) contrast(1.05); transform: scale(1.02); }
+    body.app-theme-midnight #cust-view-title { background: linear-gradient(135deg,#f0f9ff 0%,#7dd3fc 40%,#38bdf8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 14px rgba(0,0,0,.8)); }
+    /* ---- design set: emerald ---- */
+    body.app-theme-emerald::before { content:""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: radial-gradient(900px 480px at 85% -5%, rgba(16,185,129,0.12), transparent 60%), radial-gradient(760px 480px at 8% 108%, rgba(217,119,6,0.06), transparent 62%); }
+    body.app-theme-emerald .glass-panel:hover { border-color: #10b98166 !important; }
+    body.app-theme-emerald ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#059669,#1e293b) !important; }
+    body.app-theme-emerald #cust-hero-banner { box-shadow: 0 40px 90px -40px rgba(16,185,129,0.30), 0 30px 60px -30px rgba(0,0,0,.9) !important; border-color: #10b98159 !important; }
+    body.app-theme-emerald #cust-hero-banner::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background: linear-gradient(to top, rgba(2,6,23,0.88) 0%, rgba(2,6,23,0.25) 45%, rgba(2,6,23,0.35) 100%); }
+    body.app-theme-emerald #cust-hero-banner > .relative { z-index: 2; }
+    body.app-theme-emerald #cust-cover-img { opacity: .6 !important; filter: saturate(1.15) contrast(1.05); transform: scale(1.02); }
+    body.app-theme-emerald #cust-view-title { background: linear-gradient(135deg,#ecfdf5 0%,#6ee7b7 40%,#10b981 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 3px 14px rgba(0,0,0,.8)); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
@@ -1236,6 +1258,12 @@
 
       <!-- 11. TAB: SETTINGS & CLOUD & DELIVERY FEE -->
       <div id="ow-panel-settings" class="hidden space-y-4 max-w-xl">
+      <div class="glass-panel p-4 rounded-2xl border border-amber-500/30 space-y-3">
+        <h4 class="text-sm font-black text-white">🎨 تصاميم العرض - اختر شكل التطبيق</h4>
+        <p class="text-[10px] text-slate-400">بدّل فوراً بين التصميم الأصلي وثلاثة تصاميم فاخرة جديدة. اختيارك يُحفظ ويُطبق على كل صفحات التطبيق.</p>
+        <div id="app-design-picker" class="grid grid-cols-2 gap-2"></div>
+      </div>
+
         <h4 class="text-sm font-bold text-white">بيانات التواصل والإعدادات العامة والسحابة والديليفري</h4>
         <div class="glass-panel p-4 rounded-2xl border border-white/10 space-y-3 text-xs">
           <div>
@@ -6349,6 +6377,71 @@ for(const id of ['hdr-phone1-val','card-phone1-display']){const e=document.getEl
 for(const id of ['hdr-phone2-val','card-phone2-display']){const e=document.getElementById(id);if(e&&e.textContent!=='01013376681')e.textContent='01013376681';}
 }
 contacts();new MutationObserver(contacts).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});
+})();
+</script>
+  <script id="app-design-sets">
+(function(){
+  var DESIGN_SETS = [
+    { id: 'cinematic', name: 'سينمائي ذهبي', icon: '🎬', desc: 'فخامة سينمائية بصور حقيقية وإضاءة ذهبية' },
+    { id: 'midnight', name: 'ليلي أزرق', icon: '🌌', desc: 'أناقة ليلية زرقاء هادئة وراقية' },
+    { id: 'emerald', name: 'زمردي ملكي', icon: '💎', desc: 'أخضر زمردي ملكي فاخر' },
+    { id: 'original', name: 'التصميم الأصلي', icon: '↩️', desc: 'العودة لشكل التطبيق الأصلي' }
+  ];
+  var KEY = 'app_design_set_v1';
+  var COVER_IMAGES = {
+    cinematic: 'https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200&auto=format&fit=crop&q=80',
+    midnight: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80',
+    emerald: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&auto=format&fit=crop&q=80'
+  };
+  function currentSet() {
+    try { return localStorage.getItem(KEY) || 'cinematic'; } catch (e) { return 'cinematic'; }
+  }
+  function applyDesignSet(id) {
+    var body = document.body;
+    if (!body) return;
+    body.className = body.className.replace(/\bapp-theme-[a-z]+\b/g, '').replace(/\bapp-themed\b/g, '').replace(/\s{2,}/g, ' ').trim();
+    if (id && id !== 'original') {
+      body.classList.add('app-themed');
+      body.classList.add('app-theme-' + id);
+    }
+    var cover = document.getElementById('cust-cover-img');
+    if (cover) {
+      if (!cover.getAttribute('data-original-src')) cover.setAttribute('data-original-src', cover.getAttribute('src') || '');
+      cover.src = (id === 'original') ? cover.getAttribute('data-original-src') : (COVER_IMAGES[id] || cover.getAttribute('data-original-src'));
+    }
+  }
+  window.setAppDesign = function(id) {
+    try { localStorage.setItem(KEY, id); } catch (e) {}
+    applyDesignSet(id);
+    renderDesignPicker();
+    if (typeof showToast === 'function') {
+      var t = DESIGN_SETS.find(function(x){ return x.id === id; });
+      showToast('تم تطبيق تصميم: ' + (t ? t.icon + ' ' + t.name : id) + ' ✨');
+    }
+  };
+  function renderDesignPicker() {
+    var box = document.getElementById('app-design-picker');
+    if (!box) return;
+    var cur = currentSet();
+    box.innerHTML = '';
+    DESIGN_SETS.forEach(function(t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      var active = (t.id === cur);
+      b.className = 'p-3 rounded-2xl border text-right transition ' + (active
+        ? 'border-amber-400 bg-amber-500/15 shadow-lg'
+        : 'border-slate-700 bg-slate-900/70 hover:border-slate-500');
+      b.innerHTML = '<div class="text-lg">' + t.icon + '</div>' +
+        '<div class="text-[11px] font-black ' + (active ? 'text-amber-300' : 'text-white') + ' mt-1">' + t.name + (active ? ' ✓' : '') + '</div>' +
+        '<div class="text-[9px] text-slate-400 mt-0.5 leading-relaxed">' + t.desc + '</div>';
+      b.onclick = function(){ window.setAppDesign(t.id); };
+      box.appendChild(b);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    applyDesignSet(currentSet());
+    renderDesignPicker();
+  });
 })();
 </script>
 </body>
